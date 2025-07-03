@@ -26,6 +26,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.0.0",
     "jose": "^6.0.11",
     "jwt-decode": "^4.0.0",
