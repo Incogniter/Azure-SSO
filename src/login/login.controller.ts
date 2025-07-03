@@ -7,12 +7,12 @@ import {
   HttpStatus,
   Req,
   UseGuards,
+  Post,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { LoginService } from './login.service';
 import config from '../main_congig';
 import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils';
-import { CookieOrHeaderAuthGuard } from './authGuard';
 import { Request } from 'express';
 
 
@@ -119,7 +119,26 @@ export class LoginController {
       return res.status(401).send('Token refresh failed');
     }
   }
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
 
+    res.clearCookie('idToken', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    res.clearCookie('account', {
+      secure: true,
+      sameSite: 'none',
+    });
+    res.status(200).send('Logged out');
+  }
 
   @Get('me')
   getMe(@Req() req: Request) {
