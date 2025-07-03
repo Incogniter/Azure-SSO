@@ -15,14 +15,12 @@ export class CookieOrHeaderAuthGuard implements CanActivate {
 
         let accessToken = request.headers['authorization']?.toString().replace(/^Bearer\s/, '');
         let idToken = request.headers['x-id-token'] as string;
-        let account = request.headers['x-accounts'] as string;
+        let account = request.headers['x-account']
 
-        if (!accessToken || !idToken || !account) {
-            accessToken = request.cookies['accessToken'];
-            idToken = request.cookies['idToken'];
-             account = request.cookies['accounts'];
-
-        }
+        // if (!accessToken || !idToken) {
+        //     accessToken = request.cookies['accessToken'];
+        //     idToken = request.cookies['idToken'];
+        // }
 
         if (!accessToken || !idToken) {
             throw new UnauthorizedException('Missing tokens');
@@ -40,7 +38,7 @@ export class CookieOrHeaderAuthGuard implements CanActivate {
             name: decoded.name,
             accessToken: accessToken,
             idToken: idToken,
-            accounts: account
+            account: account
         };
 
         return true;

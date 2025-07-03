@@ -18,9 +18,9 @@ export class LoginService {
 
   async getLoginUrl(): Promise<string> {
     const authCodeUrlParameters = {
-      scopes: ["user.read", "GroupMember.Read.All",'offline_access',],
+      scopes: ["user.read", "GroupMember.Read.All",],
       redirectUri: config.AD_BACKEND_REDIRECT_URI,
-       prompt: "consent",
+      //  prompt: "consent",
     };
     return await this.msalClient.getAuthCodeUrl(authCodeUrlParameters);
   }
@@ -28,31 +28,27 @@ export class LoginService {
   async getTokenFromCode(code: string) {
     return await this.msalClient.acquireTokenByCode({
       code,
-      scopes: ["user.read", "GroupMember.Read.All",'offline_access',],
+      scopes: ["user.read", "GroupMember.Read.All",],
       redirectUri: config.AD_BACKEND_REDIRECT_URI,
     });
   }
-  
-//   async refreshAccessToken(account: { homeAccountId: string }) {
-//        const tokenCache = this.msalClient.getTokenCache();
-//   const acc = await tokenCache.getAccountByHomeId(account.homeAccountId);
 
-//   if (!acc) {
-//     throw new Error('Account not found in cache');
-//   }
+  async refreshAccessToken(account) {
+    const tokenRequest = {
+      scopes: ['user.read', 'GroupMember.Read.All'],
+      account: account,
+      forceRefresh: true,
+    };
 
-//   const result = await this.msalClient.acquireTokenSilent({
-//     account: acc, 
-//     scopes: ['user.read', 'GroupMember.Read.All', 'openid', 'profile', 'email'],
-//   });
+    const response = await this.msalClient.acquireTokenSilent(tokenRequest);
 
-//   return {
-//     accessToken: result.accessToken,
-//     idToken: result.idToken,
-//     expiresOn: result.expiresOn,
-//     account: result.account?.homeAccountId,
-//   };
-// }
+    return {
+      accessToken: response.accessToken,
+      idToken: response.idToken,
+      account: response.account,
+    };
+  }
+
 
 
 }

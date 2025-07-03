@@ -39,7 +39,7 @@ export class LoginController {
       const tokenResponse = await this.loginService.getTokenFromCode(code);
       const accessToken = tokenResponse.accessToken;
       const idToken = tokenResponse.idToken
-      const accounts = tokenResponse.account
+      const account = tokenResponse.account
 
       const isValid = await validateAzureIdToken(idToken);
       if (!isValid) {
@@ -50,20 +50,26 @@ export class LoginController {
         return res.status(403).send('Access Denied: Not in required Azure group');
       }
       res.cookie('accessToken', accessToken, {
-        httpOnly: false,
-        secure: false,
-        sameSite: 'lax',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        // maxAge: 5 * 1000, 
       });
+
       res.cookie('idToken', idToken, {
-        httpOnly: false,
-        secure: false,
-        sameSite: 'lax',
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        // maxAge: 5 * 1000,
       });
-      res.cookie('account', accounts, {
-        httpOnly: false,
-        secure: false,
-        sameSite: 'lax',
+
+      res.cookie('account', JSON.stringify(account), {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        // maxAge: 5 * 1000,
       });
+
 
       return res.redirect(`${config.AD_FRONTEND_REDIRECT_URI}`);
     } catch (error) {
@@ -71,43 +77,73 @@ export class LoginController {
       return res.status(500).send('Login failed');
     }
   }
-  // @Get('refresh')
-  // async refreshToken(@Req() req: Request, @Res() res: Response) {
-  //   const cookies = req.cookies;
-  //   const accountCookie = cookies?.account;
 
-  // if (!accountCookie) {
-  //   return res.status(401).send('Account info missing');
-  // }
+  @Get('refresh')
+  async refreshToken(@Req() req: Request, @Res() res: Response) {
+    const accountCookie = req.cookies?.account;
 
-  //   let account;
-  //   try {
-  //     account = JSON.parse(accountCookie);      
-  //   } catch {
-  //     return res.status(400).send('Invalid account format');
-  //   }
+    if (!accountCookie) {
+      return res.status(401).send('No account cookie found');
+    }
+    let account;
+    try {
+      account = JSON.parse(accountCookie);
+    } catch {
+      return res.status(400).send('Invalid account format');
+    }
 
-  //   try {
-  //     const newTokens = await this.loginService.refreshAccessToken(account);
+    try {
+      const newTokens = await this.loginService.refreshAccessToken(account);
 
-  //     res.cookie('accessToken', newTokens.accessToken, { httpOnly: false, secure: false, sameSite: 'lax' });
-  //     res.cookie('idToken', newTokens.idToken, { httpOnly: false, secure: false, sameSite: 'lax' });
-  //     res.cookie('account', JSON.stringify(newTokens.account), { httpOnly: false, secure: false, sameSite: 'lax' });
+      res.cookie('accessToken', newTokens.accessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
 
-  //     return res.status(200).send('Token refreshed');
-  //   } catch (error) {
-  //     console.error('Refresh error:', error);
-  //     return res.status(401).send('Failed to refresh token');
-  //   }
-  // }
+      res.cookie('idToken', newTokens.idToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+
+      res.cookie('account', JSON.stringify(newTokens.account), {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+      });
+
+      return res.status(200).json({ message: 'Tokens refreshed' });
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return res.status(401).send('Token refresh failed');
+    }
+  }
 
 
-  @UseGuards(CookieOrHeaderAuthGuard)
   @Get('me')
   getMe(@Req() req: Request) {
+    const accessToken = req.cookies?.accessToken;
+    const idToken = req.cookies?.idToken;
+    const account = req.cookies?.account;
+
+    if (!accessToken || !idToken || !account) {
+      return {
+        user: null,
+        accessToken: null,
+        idToken: null,
+        account: null
+      };
+    }
+    const decoded = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString());
     return {
-      message: 'Authenticated',
-      user: req['user'],
+      user: {
+        name: decoded.name,
+        email: decoded.email,
+      },
+      accessToken,
+      idToken,
+      account
     };
   }
 
