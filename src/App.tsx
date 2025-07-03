@@ -1,6 +1,5 @@
 const LoginPage = () => {
   const handleSSOLogin = () => {
-    // Redirect to SSO auth URL
     window.location.href = "http://localhost:1433/auth/microsoft_login";  
   };
   return (
