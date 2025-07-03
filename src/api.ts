@@ -1,15 +1,14 @@
 import { useAuth } from './AuthContext';
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
-  const { getAccessToken, tokens } = useAuth();
+  const { tokens } = useAuth();
 
-  const token = await getAccessToken(); 
   const idToken = tokens?.idToken;
-  const accessToken = token?.ccessToken
-  const account = localStorage.getItem('account');
+  const accessToken = tokens?.accaccessToken
+  const account = tokens?.account
 
   const headers = {
-    Authorization: token ? `Bearer ${accessToken}` : '',
+    Authorization: tokens ? `Bearer ${accessToken}` : '',
     'x-id-token': idToken || '',
     'x-account': account || '',
     'Content-Type': 'application/json',
