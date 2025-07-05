@@ -142,7 +142,7 @@ export class LoginController {
     res.status(200).send('Logged out');
   }
   @UseGuards(RolesGuard)
-  @Roles('Admin')
+  @Roles('Manager')
   @Get('me')
   getMe(@Req() req: Request) {
     const accessToken = req.cookies?.accessToken;

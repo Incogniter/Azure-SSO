@@ -71,3 +71,4 @@ export async function isUserInAzureGroup(accessToken: string): Promise<boolean> 
     return false;
   }
 }
+
