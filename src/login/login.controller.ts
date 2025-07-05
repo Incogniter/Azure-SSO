@@ -9,6 +9,7 @@ import {
   UseGuards,
   Post,
   ForbiddenException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { LoginService } from './login.service';
@@ -20,14 +21,13 @@ import { RolesGuard } from './guard/roles.guard';
 import { PermissionsGuard } from './guard/permissions.gaurd';
 import { Permissions } from './decorators/permissions.decorator';
 import { AccessControlService } from 'src/utils/access-control.service';
-
+import { AuditInterceptor } from 'src/audit-log/audit.interceptor';
 
 @Controller('auth')
 export class LoginController {
   constructor(
     private readonly loginService: LoginService,
     private readonly acs: AccessControlService
-
   ) { }
   
   // 1. Start Azure login by redirecting to Microsoft login URL
@@ -149,14 +149,13 @@ export class LoginController {
     });
     res.status(200).send('Logged out');
   }
+  @UseInterceptors(AuditInterceptor)
   @UseGuards(RolesGuard, PermissionsGuard)
   @Permissions(('invoice:view'))
   @Roles('Manager')
   @Get('me')
   getMe(@Req() req: Request) {
-    const canEdit = this.acs.canUserAccess('invoice:view');
-    console.log(canEdit);
-    
+    const canEdit = this.acs.canUserAccess('invoice:view');    
      if (!canEdit) {
       throw new ForbiddenException('No access to edit this invoice');
     }
@@ -183,6 +182,4 @@ export class LoginController {
       account
     };
   }
-
-
 }
