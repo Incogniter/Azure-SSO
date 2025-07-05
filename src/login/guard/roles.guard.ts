@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { jwtDecode } from 'jwt-decode';
-import { resolveInheritedRoles } from './utils/role-hierarchy';
+import { resolveInheritedRoles } from '../utils/role-hierarchy';
 
 interface DecodedToken {
   roles?: string[];

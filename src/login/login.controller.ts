@@ -14,8 +14,10 @@ import { LoginService } from './login.service';
 import config from '../main_congig';
 import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils';
 import { Request } from 'express';
-import { Roles } from './roles.decorator';
-import { RolesGuard } from './roles.guard';
+import { Roles } from './decorators/roles.decorator';
+import { RolesGuard } from './guard/roles.guard';
+import { PermissionsGuard } from './guard/permissions.gaurd';
+import { Permissions } from './decorators/permissions.decorator';
 
 
 @Controller('auth')
@@ -141,7 +143,8 @@ export class LoginController {
     });
     res.status(200).send('Logged out');
   }
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, PermissionsGuard)
+  @Permissions(('invoice:view '))
   @Roles('Manager')
   @Get('me')
   getMe(@Req() req: Request) {
