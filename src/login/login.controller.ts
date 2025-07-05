@@ -14,6 +14,8 @@ import { LoginService } from './login.service';
 import config from '../main_congig';
 import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils';
 import { Request } from 'express';
+import { Roles } from './roles.decorator';
+import { RolesGuard } from './roles.guard';
 
 
 @Controller('auth')
@@ -139,7 +141,8 @@ export class LoginController {
     });
     res.status(200).send('Logged out');
   }
-
+  @UseGuards(RolesGuard)
+  @Roles('Admin')
   @Get('me')
   getMe(@Req() req: Request) {
     const accessToken = req.cookies?.accessToken;
