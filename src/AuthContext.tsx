@@ -18,7 +18,7 @@ function isTokenExpiringSoon(token: string): boolean {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
-    const [tokens, setTokens] = useState<{ accessToken?: string, idToken?: string, account?: {} }>({});
+    const [tokens, setTokens] = useState<{accessToken?: string, idToken?: string, account?: {} , roles?:string[]}>({});
     const inactivityTimeout = useRef<any>(null);
     const isLoggingOut = useRef(false); 
 
@@ -32,14 +32,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await res.json();
 
             if (res.ok) {
-                const decoded: any = jwtDecode(data.accessToken);
-                console.log(decoded);
-                
+                const decoded: any = jwtDecode(data.idToken);                
                 setUser(data.user.name);
                 setTokens({
                     accessToken: data.accessToken,
                     idToken: data.idToken,
-                    account: data.account
+                    account: data.account,
+                    roles:decoded.roles
                 });
             } else {
                 console.warn('Auth check failed', data);
