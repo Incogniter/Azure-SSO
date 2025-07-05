@@ -32,6 +32,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const data = await res.json();
 
             if (res.ok) {
+                const decoded: any = jwtDecode(data.accessToken);
+                console.log(decoded);
+                
                 setUser(data.user.name);
                 setTokens({
                     accessToken: data.accessToken,
@@ -56,6 +59,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             fetchMe()
         } catch (err) {
             console.error('Silent refresh error:', err);
+             logout();
         }
     };
 
