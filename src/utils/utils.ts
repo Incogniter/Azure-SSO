@@ -1,7 +1,10 @@
 import * as jose from 'jose';
 import { Client } from '@microsoft/microsoft-graph-client';
 import { jwtDecode } from 'jwt-decode';
-import config from './main_congig'; 
+import config from '../main_congig'; 
+import { resolvePermissions } from './role-permissions';
+import { REQUEST } from '@nestjs/core';
+import { Inject } from '@nestjs/common';
 
 const tenantId = process.env.TENANT_ID;
 const AZURE_OPENID_CONFIG_URL = `https://login.microsoftonline.com/${tenantId}/v2.0/.well-known/openid-configuration`;
@@ -71,4 +74,3 @@ export async function isUserInAzureGroup(accessToken: string): Promise<boolean> 
     return false;
   }
 }
-

@@ -8,22 +8,28 @@ import {
   Req,
   UseGuards,
   Post,
+  ForbiddenException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { LoginService } from './login.service';
 import config from '../main_congig';
-import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils';
+import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils/utils';
 import { Request } from 'express';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guard/roles.guard';
 import { PermissionsGuard } from './guard/permissions.gaurd';
 import { Permissions } from './decorators/permissions.decorator';
+import { AccessControlService } from 'src/utils/access-control.service';
 
 
 @Controller('auth')
 export class LoginController {
-  constructor(private readonly loginService: LoginService) { }
+  constructor(
+    private readonly loginService: LoginService,
+    private readonly acs: AccessControlService
 
+  ) { }
+  
   // 1. Start Azure login by redirecting to Microsoft login URL
   @Get('microsoft_login')
   async loginToAzure(@Res() res: Response) {
@@ -144,10 +150,16 @@ export class LoginController {
     res.status(200).send('Logged out');
   }
   @UseGuards(RolesGuard, PermissionsGuard)
-  @Permissions(('invoice:view '))
+  @Permissions(('invoice:view'))
   @Roles('Manager')
   @Get('me')
   getMe(@Req() req: Request) {
+    const canEdit = this.acs.canUserAccess('invoice:view');
+    console.log(canEdit);
+    
+     if (!canEdit) {
+      throw new ForbiddenException('No access to edit this invoice');
+    }
     const accessToken = req.cookies?.accessToken;
     const idToken = req.cookies?.idToken;
     const account = req.cookies?.account;
