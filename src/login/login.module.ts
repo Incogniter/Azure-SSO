@@ -1,16 +1,12 @@
-import { Module, Scope } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { LoginService } from './login.service';
 import { LoginController } from './login.controller';
-import { AccessControlService } from 'src/utils/access-control.service';
 import { AuditLogModule } from 'src/audit-log/audit-log.module';
+import { SharedModule } from 'src/shared.module';
 
 @Module({
-  imports: [AuditLogModule], 
+  imports: [AuditLogModule,SharedModule], 
   controllers: [LoginController],
-  providers: [LoginService, {
-      provide: AccessControlService,
-      useClass: AccessControlService,
-      scope: Scope.REQUEST, 
-    }],
+  providers: [LoginService],
 })
 export class LoginModule {}

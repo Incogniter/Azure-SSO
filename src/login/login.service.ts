@@ -18,7 +18,7 @@ export class LoginService {
 
   async getLoginUrl(): Promise<string> {
     const authCodeUrlParameters = {
-      scopes: ["user.read", "GroupMember.Read.All",],
+      scopes: ["user.read", "GroupMember.Read.All","User.Read.All","email"],
       redirectUri: config.AD_BACKEND_REDIRECT_URI,
       //  prompt: "consent",
     };
@@ -28,14 +28,14 @@ export class LoginService {
   async getTokenFromCode(code: string) {
     return await this.msalClient.acquireTokenByCode({
       code,
-      scopes: ["user.read", "GroupMember.Read.All",],
+      scopes: ["user.read", "GroupMember.Read.All","User.Read.All","email"],
       redirectUri: config.AD_BACKEND_REDIRECT_URI,
     });
   }
 
   async refreshAccessToken(account) {
     const tokenRequest = {
-      scopes: ['user.read', 'GroupMember.Read.All'],
+      scopes: ['user.read', 'GroupMember.Read.All',"User.Read.All","email"],
       account: account,
       forceRefresh: true,
     };
