@@ -1,14 +1,15 @@
-import { useAuth } from './AuthContext';
 
-export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
-  const { tokens } = useAuth();
-
+export const apiFetch = async (endpoint: string, options: RequestInit = {} ,tokens: {
+    accessToken: string;
+    idToken: string;
+    account: string;
+  }) => {  
   const idToken = tokens?.idToken;
-  const accessToken = tokens?.accaccessToken
+  const accessToken = tokens?.accessToken
   const account = tokens?.account
-
+  
   const headers = {
-    Authorization: tokens ? `Bearer ${accessToken}` : '',
+    Authorization:`Bearer ${accessToken}`,
     'x-id-token': idToken || '',
     'x-account': account || '',
     'Content-Type': 'application/json',

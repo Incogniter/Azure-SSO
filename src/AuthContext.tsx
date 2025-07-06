@@ -64,6 +64,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const logout = async () => {
         isLoggingOut.current = true;
+        localStorage.setItem('logout-event', Date.now().toString());
         try {
             await fetch('http://localhost:1433/auth/logout', { credentials: 'include',method: 'POST', });
         } catch { }
@@ -114,6 +115,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             fetchMe();
         }
 
+    }, []);
+        useEffect(() => {
+        const handleStorageEvent = (event: StorageEvent) => {
+            if (event.key === 'logout-event') {
+                console.log('🔁 Tab logout sync received. Logging out.');
+                logout();
+            }
+        };
+        window.addEventListener('storage', handleStorageEvent);
+        return () => window.removeEventListener('storage', handleStorageEvent);
     }, []);
 
     return (
