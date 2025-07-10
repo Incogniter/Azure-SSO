@@ -1,4 +1,4 @@
-import { Controller, Post, Headers, HttpException, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Headers, UnauthorizedException } from '@nestjs/common';
 import { AzureSyncService } from './azure-sync.service';
 
 @Controller('azure-sync')
@@ -7,6 +7,8 @@ export class AzureSyncController {
 
 @Post('trigger')
 async triggerSync(@Headers() headers: any) {
+  console.log(headers);
+  
   const authHeader = headers.authorization;  
   const accessToken = authHeader?.replace(/^Bearer /, '');
 

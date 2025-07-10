@@ -18,11 +18,15 @@ import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils/utils';
 import { Request } from 'express';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guard/roles.guard';
-import { PermissionsGuard } from './guard/permissions.gaurd';
+import { PermissionsGuard } from './guard/permissions.guard';
 import { Permissions } from './decorators/permissions.decorator';
 import { AccessControlService } from 'src/utils/access-control.service';
 import { AuditInterceptor } from 'src/audit-log/audit.interceptor';
-
+declare module 'express-serve-static-core' {
+  interface Request {
+    csrfToken(): string;
+  }
+}
 @Controller('auth')
 export class LoginController {
   constructor(
@@ -63,21 +67,18 @@ export class LoginController {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        // maxAge: 5 * 1000, 
       });
 
       res.cookie('idToken', idToken, {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        // maxAge: 5 * 1000,
       });
 
       res.cookie('account', JSON.stringify(account), {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        // maxAge: 5 * 1000,
       });
 
 
@@ -162,6 +163,7 @@ export class LoginController {
     const accessToken = req.cookies?.accessToken;
     const idToken = req.cookies?.idToken;
     const account = req.cookies?.account;
+    const csrfToken = req.csrfToken();
 
     if (!accessToken || !idToken || !account) {
       return {
@@ -179,7 +181,8 @@ export class LoginController {
       },
       accessToken,
       idToken,
-      account
+      account,
+      csrfToken
     };
   }
 }

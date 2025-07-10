@@ -33,7 +33,7 @@ export class LoginService {
     });
   }
 
-  async refreshAccessToken(account) {
+  async refreshAccessToken(account: any) {
     const tokenRequest = {
       scopes: ['user.read', 'GroupMember.Read.All',"User.Read.All","email"],
       account: account,
