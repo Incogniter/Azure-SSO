@@ -1,5 +1,6 @@
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {} ,tokens: {
+    csrfToken: string;
     accessToken: string;
     idToken: string;
     account: string;
@@ -7,11 +8,13 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {} ,toke
   const idToken = tokens?.idToken;
   const accessToken = tokens?.accessToken
   const account = tokens?.account
+  const csrfToken = tokens?.csrfToken
   
   const headers = {
     Authorization:`Bearer ${accessToken}`,
     'x-id-token': idToken || '',
     'x-account': account || '',
+    'x-csrf-token': csrfToken,
     'Content-Type': 'application/json',
     ...options.headers,
   };

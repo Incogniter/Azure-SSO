@@ -4,15 +4,15 @@ import React, { useEffect } from 'react';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   
   useEffect(() => {
-    if (!loading && user !== null) {
+    if (user !== null) {
       navigate('/main');
     }
-  }, [loading, user]);
+  }, [user]);
 
-  if (loading || user === null) return null;
+  if (user === null) return null;
 
   return <>{children}</>;
 };

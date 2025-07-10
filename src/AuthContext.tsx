@@ -18,7 +18,7 @@ function isTokenExpiringSoon(token: string): boolean {
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState(null);
-    const [tokens, setTokens] = useState<{accessToken?: string, idToken?: string, account?: {} , roles?:string[]}>({});
+    const [tokens, setTokens] = useState<{accessToken?: string, idToken?: string, account?: {} , roles?:string[], csrfToken?:string}>({});
     const inactivityTimeout = useRef<any>(null);
     const isLoggingOut = useRef(false); 
 
@@ -38,7 +38,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     accessToken: data.accessToken,
                     idToken: data.idToken,
                     account: data.account,
-                    roles:decoded.roles
+                    roles:decoded.roles,
+                    csrfToken:data.csrfToken
                 });
             } else {
                 console.warn('Auth check failed', data);

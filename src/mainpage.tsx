@@ -9,6 +9,7 @@ const MainPage = () => {
 
     try {
       await apiFetch('azure-sync/trigger', {
+        credentials: 'include',
         method: 'POST',
       },tokens);
     //   alert('Azure sync initiated!');
