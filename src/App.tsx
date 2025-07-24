@@ -1,6 +1,6 @@
 const LoginPage = () => {
   const handleSSOLogin = () => {
-    window.location.href = "http://localhost:1433/auth/microsoft_login";  
+    window.location.href = "https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/microsoft_login";  
   };
   return (
     <div style={styles.container}>

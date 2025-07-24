@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const fetchMe = async () => {
         try {
-            const res = await fetch('http://localhost:1433/auth/me', {
+            const res = await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/me', {
                 credentials: 'include',
             });
             const data = await res.json();
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const refreshToken = async () => {
          if (isLoggingOut.current) return;
         try {
-            const res = await fetch('http://localhost:1433/auth/refresh', {
+            const res = await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/refresh', {
                 credentials: 'include',
             });
             if (!res.ok) throw new Error('Refresh failed');
@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoggingOut.current = true;
         localStorage.setItem('logout-event', Date.now().toString());
         try {
-            await fetch('http://localhost:1433/auth/logout', { credentials: 'include',method: 'POST', });
+            await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/logout', { credentials: 'include',method: 'POST', });
         } catch { }
         setUser(null);
         setTokens({});

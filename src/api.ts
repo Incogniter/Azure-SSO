@@ -19,7 +19,7 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {} ,toke
     ...options.headers,
   };
 
-  const response = await fetch(`http://localhost:1433/${endpoint}`, {
+  const response = await fetch(`https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/${endpoint}`, {
     ...options,
     headers,
   });
