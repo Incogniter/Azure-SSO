@@ -14,7 +14,7 @@ import {
 import { Response } from 'express';
 import { LoginService } from './login.service';
 import config from '../main_congig';
-import { isUserInAzureGroup, validateAzureIdToken } from 'src/utils/utils';
+import { isUserInAzureGroup, validateAzureIdToken } from '@utils/utils';
 import { Request } from 'express';
 import { Roles } from './decorators/roles.decorator';
 import { RolesGuard } from './guard/roles.guard';

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { jwtDecode } from 'jwt-decode';
-import { validateAzureIdToken, isUserInAzureGroup } from 'src/utils/utils';
+import { validateAzureIdToken, isUserInAzureGroup } from '@utils/utils';
 
 @Injectable()
 export class CookieOrHeaderAuthGuard implements CanActivate {
