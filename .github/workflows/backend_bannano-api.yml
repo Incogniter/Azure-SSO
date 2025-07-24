@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read # Required for actions/checkout
+      contents: read 
 
     steps:
       - uses: actions/checkout@v4
@@ -39,32 +39,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
-      id-token: write   # Required for requesting the OIDC JWT
-      contents: read
-
-    env:
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      TENANT_ID: ${{ secrets.TENANT_ID }}
-      AD_BACKEND_REDIRECT_URI: ${{ secrets.AD_BACKEND_REDIRECT_URI }}
-      AD_FRONTEND_REDIRECT_URI: ${{ secrets.AD_FRONTEND_REDIRECT_URI }}
-      GROUP_ID: ${{ secrets.GROUP_ID }}
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-
-      - name: Create .env file from secrets
-        run: |
-          echo "CLIENT_ID=${{ env.CLIENT_ID }}" >> .env
-          echo "CLIENT_SECRET=${{ env.CLIENT_SECRET }}" >> .env
-          echo "TENANT_ID=${{ env.TENANT_ID }}" >> .env
-          echo "AD_BACKEND_REDIRECT_URI=${{ env.AD_BACKEND_REDIRECT_URI }}" >> .env
-          echo "AD_FRONTEND_REDIRECT_URI=${{ env.AD_FRONTEND_REDIRECT_URI }}" >> .env
-          echo "GROUP_ID=${{ env.GROUP_ID }}" >> .env
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -72,10 +55,11 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_D6CC2B85DC2642E58129A43A317B3F0A }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_0102422C9FD84F63AD2C66A09158A4DF }}
 
-      - name: Deploy to Azure Web App
+      - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'bannano-api'
           slot-name: 'Production'
           package: dist
+          
