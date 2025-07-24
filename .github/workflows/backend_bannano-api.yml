@@ -25,10 +25,10 @@ jobs:
       - name: Build NestJS app
         run: npm run build
 
-      - name: Copy package.json to dist folder
-        run: cp package.json dist/
-              cp -r node_modules dist/  # Optional if your Azure App Service doesn't install deps
-
+      - name: Copy package.json and lock file to dist folder
+        run: |
+          cp package.json dist/
+          cp package-lock.json dist/
 
       - name: Upload built files
         uses: actions/upload-artifact@v4
