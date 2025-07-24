@@ -33,7 +33,6 @@ export class LoginController {
     private readonly loginService: LoginService,
     private readonly acs: AccessControlService
   ) { }
-  
   // 1. Start Azure login by redirecting to Microsoft login URL
   @Get('microsoft_login')
   async loginToAzure(@Res() res: Response) {
@@ -156,8 +155,8 @@ export class LoginController {
   @Roles('Manager')
   @Get('me')
   getMe(@Req() req: Request) {
-    const canEdit = this.acs.canUserAccess('invoice:view');    
-     if (!canEdit) {
+    const canEdit = this.acs.canUserAccess('invoice:view');
+    if (!canEdit) {
       throw new ForbiddenException('No access to edit this invoice');
     }
     const accessToken = req.cookies?.accessToken;
@@ -184,5 +183,9 @@ export class LoginController {
       account,
       csrfToken
     };
+  }
+   @Get('/')
+  async check() {
+    return "hello"
   }
 }

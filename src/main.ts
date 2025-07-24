@@ -9,8 +9,8 @@ async function bootstrap() {
   app.use(cookieParser());  
   app.use(csurf({ cookie: true }));
   app.enableCors({
-    origin: 'http://localhost:3000',
-    credentials: true,
+  origin: ['http://localhost:3000', 'https://agreeable-field-0cf67e610.2.azurestaticapps.net'],
+  credentials: true,
   });
   const port = process.env.PORT || 1433;
   console.log(`App is starting on port ${port}`);
