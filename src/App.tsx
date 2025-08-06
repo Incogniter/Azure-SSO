@@ -1,6 +1,8 @@
+import { apiUrl_local } from "./constants/route";
+
 const LoginPage = () => {
   const handleSSOLogin = () => {
-    window.location.href = "https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/microsoft_login";  
+    window.location.href = `${apiUrl_local}/auth/microsoft_login`;  
   };
   return (
     <div style={styles.container}>

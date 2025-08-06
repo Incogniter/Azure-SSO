@@ -1,3 +1,4 @@
+import { apiUrl_local } from "./constants/route";
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {} ,tokens: {
     csrfToken: string;
@@ -19,7 +20,7 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {} ,toke
     ...options.headers,
   };
 
-  const response = await fetch(`https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/${endpoint}`, {
+  const response = await fetch(`${apiUrl_local}/${endpoint}`, {
     ...options,
     headers,
   });

@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { apiUrl_local } from './constants/route';
+import { useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 
 const AuthContext = createContext<any>(null);
@@ -17,6 +21,8 @@ function isTokenExpiringSoon(token: string): boolean {
 }
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [tokens, setTokens] = useState<{accessToken?: string, idToken?: string, account?: {} , roles?:string[], csrfToken?:string}>({});
     const inactivityTimeout = useRef<any>(null);
@@ -26,7 +32,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const fetchMe = async () => {
         try {
-            const res = await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/me', {
+            const res = await fetch(`${apiUrl_local}/auth/me`, {
                 credentials: 'include',
             });
             const data = await res.json();
@@ -52,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const refreshToken = async () => {
          if (isLoggingOut.current) return;
         try {
-            const res = await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/refresh', {
+            const res = await fetch(`${apiUrl_local}/auth/refresh`, {
                 credentials: 'include',
             });
             if (!res.ok) throw new Error('Refresh failed');
@@ -67,11 +73,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoggingOut.current = true;
         localStorage.setItem('logout-event', Date.now().toString());
         try {
-            await fetch('https://bannano-api-eha2esbgbkdzdchj.canadacentral-01.azurewebsites.net/auth/logout', { credentials: 'include',method: 'POST', });
+            await fetch(`${apiUrl_local}/auth/logout`, { credentials: 'include',method: 'POST', });
         } catch { }
         setUser(null);
         setTokens({});
-        window.location.href = '/'; 
+        navigate('/')
     };
 
     const startInactivityTimer = () => {
@@ -112,11 +118,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     useEffect(() => {
-        if (location.pathname !== '/') {
+        if (window.location.pathname !== '/' && user === null){
             fetchMe();
-        }
-
+        } 
     }, []);
+
         useEffect(() => {
         const handleStorageEvent = (event: StorageEvent) => {
             if (event.key === 'logout-event') {
